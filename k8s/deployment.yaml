@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-docker-example
+  labels:
+    app: fastapi-docker-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-docker-example
+  template:
+    metadata:
+      labels:
+        app: fastapi-docker-example
+    spec:
+      containers:
+      - name: fastapi-docker-example
+        image: fastapi-docker-example:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 100m
+          limits:
+            memory: 256Mi
+            cpu: 500m
+        readinessProbe:
+          httpGet: &id001
+            path: /
+            port: 8000
+          periodSeconds: 10
+          failureThreshold: 3
+          initialDelaySeconds: 15
+        livenessProbe:
+          httpGet: *id001
+          periodSeconds: 10
+          failureThreshold: 3
+          initialDelaySeconds: 30
